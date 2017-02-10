@@ -85,25 +85,7 @@
 %define DF_MASK 00000400h
 %define OF_MASK 00000800h
 
-; if an ELF_TYPE (does this matter?)
-; define underscore versions!?
-; linux doesn't underscore things
-; windows does
-; so we make it compatible with each other by defining _scanf as a macro for scanf
-; BUT only if we have ELF_TYPE which means an ELF executables!
-%ifdef ELF_TYPE
-    %define _scanf   scanf
-    %define _printf  printf
-    %define _getchar getchar
-    %define _putchar putchar
-    %define _fputs   fputs
-%endif
-
-%ifdef OBJ_TYPE
-    segment .data public align=4 class=data use32
-%else
-    segment .data
-%endif
+segment .data
 
 int_format	    db  "%i", 0
 string_format       db  "%s", 0

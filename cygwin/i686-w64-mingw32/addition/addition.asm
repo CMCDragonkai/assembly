@@ -5,21 +5,19 @@
 ; statically initialised variables
 segment .data
 
-; can these be indented?
-
-; label size value
-prompt1 db "Enter a number: ", 0
-prompt2 db "Enter another number: ", 0
-outmsg1 db "You entered ", 0
-outmsg2 db " and ", 0
-outmsg3 db ", the sum of these is ", 0
+    ; label size value
+    prompt1 db "Enter a number: ", 0
+    prompt2 db "Enter another number: ", 0
+    outmsg1 db "You entered ", 0
+    outmsg2 db " and ", 0
+    outmsg3 db ", the sum of these is ", 0
 
 ; statically uninitialised variables
 segment .bss
 
-; label size multiplier
-input1 resd 1
-input2 resd 1
+    ; label size multiplier
+    input1 resd 1
+    input2 resd 1
 
 ; program code
 segment .text
@@ -34,6 +32,7 @@ segment .text
     ; this makes the label have an external scope
     ; accessed by any module now
     global _asm_addition
+
 _asm_addition:
 
     ; setup routine

@@ -5,8 +5,15 @@ CFLAGS=
 CXX=i686-w64-mingw32-g++
 CXXFLAGS=
 
-.asm.o:
-	$(AS) $(ASFLAGS) -o $*.o $*.asm
+.PHONY: all addition clean cleanall
 
-.cpp.o:
-	$(CXX) -c $(CXXFLAGS) $*.cpp
+%.asm.o: %.asm
+	$(AS) $(ASFLAGS) -o $@ $<
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) -c $< -o $@
+
+%.o: %.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+all: io addition

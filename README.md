@@ -1,29 +1,23 @@
-This repo holds practice and experimental programs written in NASM assembly for
-the x86 instruction architecture.
+Assembly
+========
 
-About
+NASM x86 Assembly.
 
-The projects in this repo are a combination of practice questions from the
-[PCASM Tutorial](http://www.drpaulcarter.com/pcasm/) and my projects from
-two semesters of Assembly taught at
-[BMCC](http://www.bmcc.cuny.edu/j2ee/index.jsp). The school projects were all
-ported from [MASM](http://www.masm32.com). The examples directory holds all the
-supporting source and include files needed to follow the PCASM tutorial.
+On 64 bit Cygwin, you have 4 different C compiler toolchains:
 
-Environment
+* `x86_64-pc-cygwin-gcc` - 64 bit Cygwin GCC for 64 bit machine (a.k.a `gcc`).
+* `i686-pc-cygwin-gcc` - 32 bit Cygwin GCC for 64 bit machine.
+* `x86_64-w64-mingw32-gcc` - 64 bit MinGW GCC for 64 bit machine.
+* `i686-w64-mingw32-gcc` - 32 bit MingW GCC for 64 bit machine.
 
-All projects were built using the instructions in the comments at the top of
-each main asm file on a 32 bit Archlinux Virtualbox instance. The projects are
-written in NASM but are executed by a C driver program as outlined in the PCASM
-tutorial.
+You can get those compilers by downloading the necessary packages.
 
-Requirements
+Assembly examples will be categorised by the compiler toolchain.
 
-* make
-* nasm
-* gcc
+Note that assembly programs built by MinGW should be executed in a Windows environment like Powershell or CMD or winpty.
 
-References
+Adapted from the forked repository, and improved organisation.
 
-* http://www.drpaulcarter.com/pcasm/
-* http://asm.sourceforge.net
+The cygwin examples only use tools that can be installed from Cygwin, no Windows executables required at all! That means `nasm` and GCC all are in Cygwin!
+
+Make sure to read the PC Assembly PDF. That explains assembly.

@@ -75,73 +75,94 @@
 ; remember EBP is the base pointer relative to the ESP...
 ; a stack frame can be relative to these 2 pointers, and different programs use different calling conventions
 
-; nasm constants
+; nasm flag constants for the flag register ; on a 32 bit computer, it would be 32 bits
+; we use this by bit-anding the flag register with the mask
+; it is accessed with popf popfd, popfq
+; https://en.wikipedia.org/wiki/FLAGS_register
+; if the flag exists, it will not equal 0
+; if the flag doesn't exist, it will equal 0
 %define NL 10
+; carry flag
 %define CF_MASK 00000001h
+; parity flag
 %define PF_MASK 00000004h
+; aux carry flag
 %define AF_MASK 00000010h
+; zero flag
 %define ZF_MASK 00000040h
+; sine flag
 %define SF_MASK 00000080h
+; direction flag
 %define DF_MASK 00000400h
+; overflow flag (tells when number operations overflows)
 %define OF_MASK 00000800h
 
 segment .data
 
-int_format	    db  "%i", 0
-string_format       db  "%s", 0
-reg_format	    db  "Register Dump # %d", NL
-		    db  "EAX = %.8X EBX = %.8X ECX = %.8X EDX = %.8X", NL
-                    db  "ESI = %.8X EDI = %.8X EBP = %.8X ESP = %.8X", NL
-                    db  "EIP = %.8X FLAGS = %.4X %s %s %s %s %s %s %s", NL
-	            db  0
-carry_flag	    db  "CF", 0
-zero_flag	    db  "ZF", 0
-sign_flag	    db  "SF", 0
-parity_flag	    db	"PF", 0
-overflow_flag	    db	"OF", 0
-dir_flag	    db	"DF", 0
-aux_carry_flag	    db	"AF", 0
-unset_flag	    db	"  ", 0
-mem_format1         db  "Memory Dump # %d Address = %.8X", NL, 0
-mem_format2         db  "%.8X ", 0
-mem_format3         db  "%.2X ", 0
-stack_format        db  "Stack Dump # %d", NL
-	            db  "EBP = %.8X ESP = %.8X", NL, 0
-stack_line_format   db  "%+4d  %.8X  %.8X", NL, 0
-math_format1        db  "Math Coprocessor Dump # %d Control Word = %.4X"
-                    db  " Status Word = %.4X", NL, 0
-valid_st_format     db  "ST%d: %.10g", NL, 0
-invalid_st_format   db  "ST%d: Invalid ST", NL, 0
-empty_st_format     db  "ST%d: Empty", NL, 0
+    int_format    db "%i", 0
+    string_format db "%s", 0
+    reg_format	  db "Register Dump # %d", NL
+                  db "EAX = %.8X EBX = %.8X ECX = %.8X EDX = %.8X", NL
+                  db  "ESI = %.8X EDI = %.8X EBP = %.8X ESP = %.8X", NL
+                  db  "EIP = %.8X FLAGS = %.4X %s %s %s %s %s %s %s", NL
+                  db  0
 
-;
-; code is put in the _TEXT segment
-;
-%ifdef OBJ_TYPE
-segment text public align=1 class=code use32
-%else
+    carry_flag     db "CF", 0
+    zero_flag      db "ZF", 0
+    sign_flag      db "SF", 0
+    parity_flag    db "PF", 0
+    overflow_flag  db "OF", 0
+    dir_flag       db "DF", 0
+    aux_carry_flag db "AF", 0
+    unset_flag     db "  ", 0
+
+    mem_format1 db "Memory Dump # %d Address = %.8X", NL, 0
+    mem_format2 db  "%.8X ", 0
+    mem_format3 db  "%.2X ", 0
+
+    stack_format db  "Stack Dump # %d", NL
+    	           db  "EBP = %.8X ESP = %.8X", NL, 0
+
+    stack_line_format db  "%+4d  %.8X  %.8X", NL, 0
+
+    math_format1 db  "Math Coprocessor Dump # %d Control Word = %.4X"
+                 db  " Status Word = %.4X", NL, 0
+
+    valid_st_format   db  "ST%d: %.10g", NL, 0
+    invalid_st_format db  "ST%d: Invalid ST", NL, 0
+    empty_st_format   db  "ST%d: Empty", NL, 0
+
 segment .text
-%endif
-	global	read_int, print_int, print_string, read_char
-	global  print_char, print_nl, sub_dump_regs, sub_dump_mem
-        global  sub_dump_math, sub_dump_stack
-        extern  _scanf, _printf, _getchar, _putchar, _fputs
+
+    ; in C, functions are global by default
+    ; in NASM, routines are local by default, requiring exporting via global prefix
+    ; in both C and NASM, extern is used to import external functions/routines
+
+    extern  _scanf, _printf, _getchar, _putchar, _fputs
+    global	read_int, print_int, print_string, read_char
+    global  print_char, print_nl, sub_dump_regs, sub_dump_mem
+    global  sub_dump_math, sub_dump_stack
 
 read_int:
-	enter	4,0
+
+    ; create a stack of size 4
+    ; second parameter is for nesting, it is like a primitive way of doing closures, not used anymore by modern languages though
+	enter 4,0
+    ; changes the stack pointer as well, and pushes all registers onto the stack
 	pusha
+    ; load all the stack pointer and flag register onto the stack
 	pushf
 
-	lea	eax, [ebp-4]
-	push	eax
-	push	dword int_format
-	call	_scanf
-	pop	ecx
-	pop	ecx
+	lea eax, [ebp-4]
+	push eax
+	push dword int_format
+	call _scanf
+	pop ecx
+	pop ecx
 
 	popf
 	popa
-	mov	eax, [ebp-4]
+	mov eax, [ebp-4]
 	leave
 	ret
 

@@ -21,3 +21,7 @@ Adapted from the forked repository, and improved organisation.
 The cygwin examples only use tools that can be installed from Cygwin, no Windows executables required at all! That means `nasm` and GCC all are in Cygwin!
 
 Make sure to read the PC Assembly PDF. That explains assembly.
+
+Get keystone-assembler and unicorn-engine setup to do assembly in other architectures!
+
+On Cygwin use `winpty` to launch the programs in order to attach a proper TTY to the command line programs. Otherwise you need to use CMD to execute them.

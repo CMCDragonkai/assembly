@@ -13,7 +13,6 @@ int PRE_CDECL asm_addition (void) POST_CDECL;
 
 int main() {
 
-    int asm_status = asm_addition();
-    return asm_status;
+    return asm_addition();
 
 }

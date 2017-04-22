@@ -32,6 +32,15 @@ To understand how to the programs are built, make sure to checkout the architect
 
 Numbers on modern architectures use 2's complement. We first find the 1's complement, then we add 1 to the result. Given a number `00111000` (56), 1's complement is `11000111`. The add 1, giving us `11001000`. Computing the 2's complement gives us the negation of the number. Thus `11001000` becomes -56. Taking the 2's complement of this number gives us `00111000` (56). As you can see, taking 2's complement twice is basically negating a number twice.
 
+2's complement, is find 1's complement and 1 to the number. 1's complement is inverse of the number.
+
+56: `00111000`.
+1's complement: `11000111`.
+2's complement: `11001000` => -56
+2's complement again: `00111000` => 56.
+
+So taking the 2's complement is equivalent to negation, or inversion of the bitstring. You end up flipping between positive and negative.
+
 Given any bitstring, the CPU has no idea what it really means, it relies on the programmer to interpret the bit string. There are types associated to bitstrings, unless you specify a protocol at the meta-language!
 
 The same bitstring can represent multiple things. Like `0xFF` can be both `-1` or `+255`.
@@ -95,3 +104,18 @@ You get a carry when you add 2 single digits and the result is a double digit. Y
 Yea so because left is smaller than right, the subtraction would result in a negative number, that's why we set the carry flag which represents the fact that we would need to borrow in elementary arithmetic.
 
 Currently on page 49 of 195. Reading about gotos and unconditional jumps vs conditional jumps.
+
+---
+
+In Assembly many commands that cause overflow would use `edx:eax`.
+
+---
+
+http://soliduscode.blogspot.com.au/2012/04/creating-local-variables-in-assembly.html
+
+And you can call malloc from assembly.
+
+http://x86asm.net/articles/working-with-big-numbers-using-x86-instructions/
+
+http://cs.lmu.edu/~ray/notes/nasmtutorial/
+

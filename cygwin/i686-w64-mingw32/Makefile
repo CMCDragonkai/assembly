@@ -1,7 +1,7 @@
 AS=nasm
-ASFLAGS=-f win32 -I includes/
+ASFLAGS=-f win32 -I includes/ -g
 CC=i686-w64-mingw32-gcc
-CFLAGS=-I includes
+CFLAGS=-I includes -g
 CXX=i686-w64-mingw32-g++
 
 .PHONY: all addition clean cleanall

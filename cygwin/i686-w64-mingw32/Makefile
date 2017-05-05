@@ -32,6 +32,15 @@ arithmetic.o: arithmetic/main.c includes/cdecl.h
 arithmetic.asm.o: arithmetic/arithmetic.asm includes/io.inc
 	$(AS) $(ASFLAGS) -o arithmetic.asm.o arithmetic/arithmetic.asm
 
+bignumbers: bignumbers.o bignumbers.asm.o io.asm.o
+	$(CC) $(CFLAGS) bignumbers.o bignumbers.asm.o io.asm.o -o bignumbers
+
+bignumbers.o: bignumbers/main.c bignumbers/bignumbers.h includes/cdecl.h
+	$(CC) $(CFLAGS) -c bignumbers/main.c -o bignumbers.o
+
+bignumbers.asm.o: bignumbers/bignumbers.asm includes/io.inc
+	$(AS) $(ASFLAGS) -o bignumbers.asm.o bignumbers/bignumbers.asm
+
 io.asm.o: io/io.asm
 	$(AS) $(ASFLAGS) -o io.asm.o io/io.asm
 

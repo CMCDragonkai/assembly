@@ -510,3 +510,30 @@ Carry flag is set to 1, if it is set to 1, add 1 to the next number... So that j
 That's it, so we just need to make sure the it is all zeroed out!
 
 Ok so basically we need to have 64 bit digit space, and just carry it to the higher end...
+
+---
+
+Converting if/elses and single ifs to assembly.
+
+If just one if.
+
+```
+  default_instruct
+  jumpiftrue true
+  override_instruct
+true:
+  return_instruct
+```
+
+If if/else:
+
+```
+  jumpiftrue A
+  false_instruct
+  false_instruct
+  jmp B
+A:
+  true_instruct
+  true_instruct
+B:
+```

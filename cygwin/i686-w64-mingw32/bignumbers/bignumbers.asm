@@ -3,8 +3,8 @@
 ; assembly macros
 
 BLEN equ 1
-DWLEN equ 2
-DDLEN equ 4
+WLEN equ 2
+DWLEN equ 4
 
 segment .data
 
@@ -27,10 +27,10 @@ segment .data
 
   ; IPv6 in 128 bits
 
-  ipv6Addr1 dd 0x03707334, 0x00008a2e, 0x85a30000, 0x20010db8
-  ipv6Addr1Len equ ($-ipv6Addr1) / DDLEN
-  ipv6Addr2 dd 0x00000000, 0x00000000, 0xcad30000, 0xfdc4eca4
-  ipv6Addr2Len equ ($-ipv6Addr2) / DDLEN
+  ; ipv6Addr1 dd 0x03707334, 0x00008a2e, 0x85a30000, 0x20010db8
+  ; ipv6Addr1Len equ ($-ipv6Addr1) / DDLEN
+  ; ipv6Addr2 dd 0x00000000, 0x00000000, 0xcad30000, 0xfdc4eca4
+  ; ipv6Addr2Len equ ($-ipv6Addr2) / DDLEN
 
 segment .bss
 
@@ -52,6 +52,7 @@ segment .text
   global _asm_mul32
   global _asm_addi32
   global _asm_muli32
+  global _asm_add64
 
 _asm_add32:
 
@@ -79,16 +80,50 @@ _asm_mul32:
 _asm_addi32:
 
   enter 0,0
-
-  ; we need to deal with underflow as well as overflow
-  ; we may be adding 2 large negative numbers
-  ; how does this work?
+  push ebx
 
   mov eax, [ebp+8]
-  add eax, [ebp+12]
   cdq
-  adc edx, 0
 
+  mov ecx, [ebp+12]
+  test ecx, ecx
+  mov ebx,0
+  jns positive
+  mov ebx, -1
+
+  ; -1 + -1
+  ; 1111 1111 + 1111 1111
+  ; = 1 1111 1110
+  ; 1111 1111 + 0000 0001 + 1111 1111
+  ; = 1111 1111
+  ; => 1111 1111 : 1111 1110
+
+  ; -1 + 1
+  ; 1111 1111 + 0000 0001
+  ; = 1 0000 0000
+  ; 1111 1111 + 0000 0001 + 0000 0000
+  ; = 1 0000 0000
+  ; => 0000 0000 : 0000 0000
+
+  ; 1 + -1
+  ; 0000 0001 + 1111 1111
+  ; = 1 0000 0000
+  ; 0000 0000 + 0000 0001 + 1111 1111
+  ; = 1 0000 0000
+  ; => 0000 0000 : 0000 0000
+
+  ; 1 + 1
+  ; 0000 0001 + 0000 0001
+  ; = 0000 0010
+  ; 0000 0000 + 0000 0000 + 0000 0000
+  ; = 0000 0000
+  ; => 0000 0000 : 0000 0010
+
+positive:
+  add eax, ecx
+  adc edx, ebx
+
+  pop ebx
   leave
   ret
 
@@ -99,5 +134,35 @@ _asm_muli32:
   mov eax, [ebp+8]
   imul dword [ebp+12]
 
+  leave
+  ret
+
+_asm_add64:
+
+  enter 0,0
+  push esi
+  push edi
+
+  mov edx, [ebp+8]
+
+  ; move the first 64 bit in into the 128 bit output return address
+  mov ecx, 2
+  mov esi, ebp
+  add esi, 12
+  mov edi, edx
+  cld
+  rep movsd
+
+  mov dword [edx+8], 0
+  mov dword [edx+12], 0
+
+  mov eax, [ebp+20]
+  add dword [edx], eax
+  mov eax, [ebp+20 + 1*DWLEN]
+  adc dword [edx + 1*DWLEN], eax
+  adc dword [edx + 2*DWLEN], 0
+
+  pop edi
+  pop esi
   leave
   ret

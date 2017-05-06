@@ -53,6 +53,7 @@ segment .text
   global _asm_addi32
   global _asm_muli32
   global _asm_add64
+  global _asm_add128
 
 _asm_add32:
 
@@ -161,6 +162,42 @@ _asm_add64:
   mov eax, [ebp+20 + 1*DWLEN]
   adc dword [edx + 1*DWLEN], eax
   adc dword [edx + 2*DWLEN], 0
+
+  pop edi
+  pop esi
+  leave
+  ret
+
+_asm_add128:
+
+  enter 0,0
+  push esi
+  push edi
+
+  mov edx, [ebp+8]
+
+  mov ecx, 4
+  mov esi, ebp
+  add esi, 12
+  mov edi, edx
+  cld
+  rep movsd
+
+  mov dword [edx+16], 0
+  mov dword [edx+20], 0
+  mov dword [edx+24], 0
+  mov dword [edx+28], 0
+
+  mov eax, [ebp+28]
+  add dword [edx], eax
+  mov eax, [ebp+28 + 1*DWLEN]
+  adc dword [edx + 1*DWLEN], eax
+  mov eax, [ebp+28 + 2*DWLEN]
+  adc dword [edx + 2*DWLEN], eax
+  mov eax, [ebp+28 + 3*DWLEN]
+  adc dword [edx + 3*DWLEN], eax
+  mov eax, [ebp+28 + 4*DWLEN]
+  adc dword [edx + 4*DWLEN], 0
 
   pop edi
   pop esi

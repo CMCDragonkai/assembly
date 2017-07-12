@@ -537,3 +537,9 @@ A:
   true_instruct
 B:
 ```
+
+---
+
+https://arvindsraj.wordpress.com/2013/01/12/x86-registers-register-conventions-and-calling-conventions/
+
+Shows you the registers that you can freely use, and the registers that you must restore as a callee.
